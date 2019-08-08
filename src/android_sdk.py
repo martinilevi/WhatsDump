@@ -1,3 +1,5 @@
+import sys
+import traceback
 import subprocess
 import os, stat, platform
 import time
@@ -22,6 +24,8 @@ class AndroidSDK:
     def __init__(self):
         self._sdk_path = os.path.abspath('android-sdk')
         self._env = self._get_env_vars()
+
+	print "Will look android-sdk on %s" % (self._sdk_path)
 
         # Update original environment var
         os.environ['ANDROID_HOME'] = self._env['ANDROID_HOME']
@@ -151,14 +155,18 @@ class AndroidSDK:
 
     def is_avd_installed(self):
         try:
-            process = self._run_cmd_avdmanager('list avd')
+		    process = self._run_cmd_avdmanager('list avd')
         except:
+	    print sys.exc_info()[0]
+	    traceback.print_exc()
             return False
 
+        print "process returns %d" % (process.returncode)
         if process.returncode != 0:
             logger.debug('avdmanager list avd command return code: %d', process.returncode)
             return False
 
+        print "will search for %s" % (self.AVD_NAME.encode())
         for line in process.stdout:
             if line.find(self.AVD_NAME.encode()) != -1:
                 return True
@@ -229,7 +237,9 @@ class AndroidSDK:
 
     def _run_cmd(self, type, binary, args, wait, input, show):
         path = None
-        is_windows = platform.system() == 'Windows'
+
+        #is_windows = (platform.system() == 'Windows')
+	is_windows = True
 
         if type == CommandType.PLATFORM_TOOLS:
             path = os.path.join(self._sdk_path, 'platform-tools')
@@ -240,6 +250,8 @@ class AndroidSDK:
 
             if is_windows:
                 binary = '%s.bat' % binary
+
+        print "Trying to run '%s %s' ..." % (os.path.join(path, binary), args)
 
         return self._run_raw_cmd('%s %s' % (os.path.join(path, binary), args),
                                  wait, input, show)

@@ -8,6 +8,8 @@ from tools import ViewClientTools
 
 logger = logging.getLogger('WhatsDump')
 
+def pause():
+    programPause = raw_input("Press the <ENTER> key to continue...")
 
 class WaException:
     def __init__(self, reason):
@@ -45,6 +47,7 @@ class WhatsApp:
 
         return self.adb_client.pull('/data/data/com.whatsapp/files/key', dst_full_path) is None
 
+
     def register_phone(self, msgstore_path, country_code, phone_no, verify_method, verify_callback):
         # Step 0: install culebra dependencies
         tools = ViewClientTools(self.adb_client)
@@ -73,28 +76,33 @@ class WhatsApp:
         self.adb_client.push(msgstore_path, os.path.join('/sdcard/WhatsApp/Databases/', os.path.basename(msgstore_path)))
 
         # FIXME?
-        vc = tools.get_viewclient()
+        #vc = tools.get_viewclient()
 
         # Step 4: open whatsapp
         if not self._open_app():
             raise WaException('Can not open WhatsApp application')
 
         # Step 5: automate registration
-        if not self._automate_accept_eula(vc):
-            raise WaException('Can not accept EULA')
+        #if not self._automate_accept_eula(vc):
+        #    raise WaException('Can not accept EULA')
 
-        if not self._allow_access(vc):
-            logger.warning("Skipped allowing WhatsApp to access media/files")
+        #if not self._allow_access(vc):
+        #    logger.warning("Skipped allowing WhatsApp to access media/files")
             #raise WaException('Can not allow WhatsApp to access media/files')
 
-        if not self._do_verify(vc, country_code, phone_no, verify_method, verify_callback):
-            raise WaException('Can not verify phone number')
+        #if not self._do_verify(vc, country_code, phone_no, verify_method, verify_callback):
+        #    raise WaException('Can not verify phone number')
+
+        print "In the emulator: enter phone number, verification method, verify and then HIT ENTER"
+        pause()
 
     def _do_verify(self, vc, cc, phone, method, code_callback):
         # Set country code
         cc_view = self._wait_views(vc, 'com.whatsapp:id/registration_cc')
 
         logger.info('Touching and changing country code TextEdit...')
+
+        print "cc_view  ", cc_view
 
         if not cc_view:
             return False
@@ -106,6 +114,8 @@ class WhatsApp:
         number_view = self._wait_views(vc, 'com.whatsapp:id/registration_phone')
 
         logger.info('Touching and changing phone number TextEdit...')
+        
+	print "number_view  ", cc_view
 
         if not number_view:
             return False
@@ -117,6 +127,7 @@ class WhatsApp:
         next_view = self._wait_views(vc, 'com.whatsapp:id/registration_submit')
 
         logger.info('Touching registration submit button...')
+	print "next_view  ", cc_view
 
         if not next_view:
             return False
@@ -128,6 +139,7 @@ class WhatsApp:
         confirm_view = self._wait_views(vc, 'android:id/button1', max_tries=60, frequency=5)
 
         logger.info('Touching OK confirmation button...')
+	print "confirm_view  ", cc_view
 
         if not confirm_view:
             return False
@@ -397,8 +409,11 @@ class WhatsApp:
                         vc.traverse()
 
                     return view
+		else:
+		    print "not found id(", id,") in ids: ", ids 
 
             # Check every X seconds
+	    print "Will sleep %d seconds" % (frequency)
             time.sleep(frequency)
 
             i += 1

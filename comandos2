@@ -1,0 +1,26 @@
+ Actualizar sdk 
+ 3743  [2019-08-04 23:56:25] ./sdkmanager.bat --update 
+
+ Obtener imágenes para emulador
+ 3725  [2019-08-04 23:45:30] ./sdkmanager.bat 'system-images;android-23;google_apis;x86'
+
+ Aceptar licencias de imágenes
+ 3726  [2019-08-04 23:50:03]  ./sdkmanager.bat --licenses
+
+ Crear Android Virtual Device (máquina virtual para el emulador)
+ 3727  [2019-08-04 23:50:32] /drives/d/SDK/WhatsDump/android-sdk/tools/bin/avdmanager.bat create avd --force --name WhatsDump -k 'system-images;android-23;google_apis;x86'
+
+ Listar AVDs disponibles
+ 3728  [2019-08-04 23:51:06] /drives/d/SDK/WhatsDump/android-sdk/tools/bin/avdmanager.bat list avd
+
+ Matar emulador
+ 3752  [2019-08-04 23:58:52] adb -s emulator-5554 emu kill
+
+ Lanzar emulador sin ventana gráfica
+ 3754  [2019-08-04 23:59:11] /drives/d/SDK/WhatsDump/android-sdk/tools/emulator -avd WhatsDump -no-boot-anim -noaudio -no-snapshot -partition-size 2047  -no-window
+
+ Lanzar emulador con ventana gráfica
+ 3755  [2019-08-05 00:10:33] /drives/d/SDK/WhatsDump/android-sdk/tools/emulator -avd WhatsDump -no-boot-anim -noaudio -no-snapshot -partition-size 2047 
+
+ Lanzar whatsdump
+ 3733  [2019-08-04 23:53:21] python ./whatsdump.py --wa-phone +5491167934880 --wa-verify sms
